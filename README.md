@@ -45,11 +45,11 @@ One should configure the database and solver parameters before running the snake
 - Create a blank _.yaml_ file named _config.yaml_ (create a _.txt_ file and change the extension to _.yaml)._
 - Duplicate the _default.congi.yaml_ file, renaming it to _config.yaml_. 
 
-Then custom the _config.yaml_ file to your need (see the role of this file described hereafter). Alternatively, here is a [proposed *config.yaml* file](https://github.com/qmorvan/Getting-Started-PySPA-Eur/blob/main/config.yaml) with pre-selected major parameters to play with.
+Then custom the _config.yaml_ file to your need (see the role of this file described hereafter). Alternatively, here is a [proposed *config.yaml* file](https://github.com/qmorvan/Getting-Started-PyPSA-Eur/blob/main/config.yaml) with pre-selected major parameters to play with.
 
 The _default.config.yaml_ file contains all the parameters, along with their default values. Later, when running the snakemake process, it will look for a _config.yaml_ file for overwriting default parameters (for this run only). Thus, the _config.yaml_ file can be tailored to one’s needs, with **any subset of parameters from the default file**.
 
-One can find all the information on configuration parameters in [PyPSA-Eur’s documentation](https://pypsa-eur.readthedocs.io/en/latest/configuration.html). You can also refer to the [proposed *config.yaml* file](https://github.com/qmorvan/Getting-Started-PySPA-Eur/blob/main/config.yaml) for a non-exhaustive list of major parameters, with comments.
+One can find all the information on configuration parameters in [PyPSA-Eur’s documentation](https://pypsa-eur.readthedocs.io/en/latest/configuration.html). You can also refer to the [proposed *config.yaml* file](https://github.com/qmorvan/Getting-Started-PyPSA-Eur/blob/main/config.yaml) for a non-exhaustive list of major parameters, with comments.
 
 For running the snakemake process, which creates / updates the databases and performs optimization in one go, one should:
 1. Open conda in the terminal (*terminal* -> select *conda* in the upper right selection panel).
@@ -64,6 +64,6 @@ A “list of jobs” is updated in the terminal along the process. When finished
 
 ---
 # Bonus - MATPOWER like converter program
-A [python program](https://github.com/qmorvan/Getting-Started-PySPA-Eur/blob/main/data_converter.py) enabling to extract a networks' electrical data built by PyPSA-Eur is proposed.
+A [python program](https://github.com/qmorvan/Getting-Started-PyPSA-Eur/blob/main/data_converter.py) enabling to extract a networks' electrical data built by PyPSA-Eur is proposed.
 
 It extracts data from the resulting *.nc* PyPSA network and converts it into a [MATPOWER like (i.e. similar to the PTI format) data structure](https://matpower.org/docs/ref/matpower5.0/caseformat.html), in the form of *.csv* files. The resulting data structure is well described in the file's introduction.
