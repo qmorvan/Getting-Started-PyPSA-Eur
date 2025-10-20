@@ -1,0 +1,143 @@
+# SPDX-FileCopyrightText: Contributors to PyPSA-Eur <https://github.com/pypsa/pypsa-eur>
+# SPDX-License-Identifier: CC0-1.0
+
+# All information can be found in https://pypsa-eur.readthedocs.io/en/latest/configuration.html
+
+logging:
+  level: INFO    # {‘INFO’, ‘WARNING’, ‘ERROR’}, restricts console outputs
+
+run:
+  prefix: "set_of_runs" #""    # top-layer directory to store results, optional
+  name: "name_of_run"
+
+scenario:    # one can writie several attributes for each field. snakemake will run different scenarios accordingly.
+  clusters:    # number of buses
+  - 15
+  #- 50
+  #- 100
+  #- adm    # in case administrative clustering is set in the clustering > mode setting
+  opts:    # several parameters possible, in particular "nh" sets the time-increment for time series (n in hours).
+  - 1h
+  planning_horizons:    # consider a specific date for C02 constraints, demand growth, etc.
+  - 2035
+
+countries:    # country(ies) to consider. The list of all countries can be found back in https://pypsa-eur.readthedocs.io/en/latest/configuration.html#countries
+- ES
+#- FR
+#- PT
+
+snapshots:    # starting and ending simulation dates    /!\ KEEP 2013, it doesn't impact the "planning horizon" but is used for retrieving some datasets, and may crash if changed...
+  start: "2013-05-02"
+  end: "2013-05-03"
+  inclusive: 'left'
+
+co2_budget:
+  2020: 0.720 # average emissions of 2019 to 2021 relative to 1990, CO2 excl LULUCF, EEA data, European Environment Agency. (2023a). Annual European Union greenhouse gas inventory 1990–2021 and inventory report 2023 - CRF Table. https://unfccc.int/documents/627830
+  2025: 0.648 # With additional measures (WAM) projection, CO2 excl LULUCF, European Environment Agency. (2023e). Member States’ greenhouse gas (GHG) emission projections 2023. https://www.eea.europa.eu/en/datahub/datahubitem-view/4b8d94a4-aed7-4e67-a54c-0623a50f48e8
+  2030: 0.450 # 55% reduction by 2030 (Ff55)
+  2035: 0.250
+  2040: 0.100 # 90% by 2040
+  2045: 0.050
+  2050: 0.000 # climate-neutral by 2050
+
+electricity:
+  operational_reserve:    # whether to consider reserve requirements when dispatching.
+    activate: false
+    epsilon_load: 0.02    # share of load
+    epsilon_vres: 0.02    # share of renewable capacities
+    contingency: 4000 # MW    # minimum amount
+
+  extendable_carriers:    # whether current capacities of each sources can be expanded. /!\ If none, do not forget to put empty brackets anyways.
+    Generator: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float, OCGT, CCGT]
+    StorageUnit: [] # battery, H2
+    Store: [battery, H2]
+    Link: [] # H2 pipeline
+
+  # for arbitrary removal of power plants sources:
+  conventional_carriers: [nuclear, oil, OCGT, CCGT, coal, lignite, geothermal, biomass]
+  renewable_carriers: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float, hydro]
+
+  estimate_renewable_capacities:
+    enable: true
+    expansion_limit: false    # whether to limit the total expansion to a proportion of current capacities (false or float >= 1.0)
+
+  transmission_limit: v1.25 #vopt    # global limit to line expansion (vopt for not considering one or vf with f a float >= 1)
+
+altite:
+  nprocesses: 12    #ADAPT TO YOUR COMPUTER
+
+conventional:
+  unit_commitment: false    # whether to consider unit_commitment when optimizing. It refers to the unit_commitment.csv file
+  dynamic_fuel_price: false    # whether to consider monthly fluctuacting fuel prices. It refers to data/validation/monthly_fuel_price.csv
+
+lines:    # it refers to AC lines only, not HVDC (which are under "links")
+  s_max_pu: 0.7    # operating limit on the line 
+  s_nom_max: .inf   # upper limit for each line capacity (.inf or in MW)
+  max_extension: 100 #20000    # upper limit for the additional MW per line (MW)
+  
+  dynamic_line_rating:    # whether to anticipate dynamic behavior of lines when optimizing
+    activate: false
+    max_voltage_difference: 30 #false    # either flase or in degrees
+    max_line_rating: 1.1 #false    # either false or a float (e.g. 1.3)
+
+links:    # in particular it refers to HVDC
+  p_max_pu: 1
+  p_min_pu: -1
+  p_nom_max: .inf    #same as for lines
+  max_extension: 100 #30000    # same as for lines (MW)
+
+sector:    # whether to consider other sectors (lots of further parameters per sectors, to be retrived in the default.config.yaml file)
+  transport: false #true
+  heating: false #true
+  biomass: false #true
+  industry: false #true
+  shipping: false #true
+  aviation: false #true
+  agriculture: false #true
+  fossil_fuels: fasle #true
+
+clustering:
+  mode: busmap #administrative    # use busmap along with a number of buses to be set in scenario > clusters - use administrative for considering administrative area of the considered countries    /!\ if using administrative, put adm as unique parameter in scenario > clusters
+  administrative:
+    level: 2    # only used for administratie mode, it's the resolution of administrative regions to consider (0 -> countries, 1 -> NUTS1, 2 -> NUTS2, 3 -> NUTS3)
+
+solving:
+  options:
+    skip_iterations: true
+    io_api: "direct"  # Increases performance but only supported for the highs and gurobi solvers
+    transmission_losses: 2    # number of pieces of the piece wise loss function; 0 for ignoring losses
+    linearized_unit_commitment: true
+
+  constraints:
+    EQ: false #0.5c    # impose that each country ('c' in the end) or node (no 'c' in the end) produces at least a share of its average consumption (e.g. 0.5c -> half of the average consumption is produced within the country)
+
+  solver:
+    name: gurobi
+    options: gurobi-default
+
+  solver_options:
+    # other solvers are compatible and pre-parametrized. See the default.config.yaml file.
+    highs-default:
+      threads: 12    # ADAPT TO YOUR COMPUTER
+      solver: "ipm"
+      run_crossover: "off"
+      small_matrix_value: 1e-6
+      large_matrix_value: 1e9
+      primal_feasibility_tolerance: 1e-5
+      dual_feasibility_tolerance: 1e-5
+      ipm_optimality_tolerance: 1e-4
+      parallel: "on"
+      random_seed: 123
+    gurobi-default:
+      threads: 12    #ADAPT TO YOUR COMPUTER
+      method: 2 # barrier
+      crossover: 0
+      BarConvTol: 1.e-5
+      Seed: 123
+      AggFill: 0
+      PreDual: 0
+      GURO_PAR_BARDENSETHRESH: 200
+
+  mem_mb: 120000    #maximum memory allocation in MB
+  memory_logging_frequency: 5 # in seconds
+  runtime: 48h #runtime in humanfriendly style https://humanfriendly.readthedocs.io/en/latest/
