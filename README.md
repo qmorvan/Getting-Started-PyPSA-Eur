@@ -18,9 +18,9 @@ One can choose which energy sector(s) to consider (electricity, transport, heati
 > “The electricity system representation contains alternating current lines at and above 220 kV voltage level and all high voltage direct current lines, substations, an open database of conventional power plants, time series for electrical demand and variable renewable generator availability, geographic potentials for the expansion of wind and solar power.
 > The model is suitable both for **operational studies** and generation and transmission **expansion planning** studies.”
 
-In particular, one can leverage PyPSA-Eur database-building capacities for creating **digital twins** of real electrical networks.
+In particular, one can leverage PyPSA-Eur's database-building capacities for creating **digital twins** of real electrical networks.
 
-PyPSA-Eur relies on two **Python** based tools:
+PyPSA-Eur relies on two **Python-based** tools:
 - Snakemake, “a tool to create **reproducible and scalable** data analyses.” Through a unique configuration file, one can specify **all the parameters** to consider for building the database along with optimization parameters.
 - PyPSA, an energy system modeling Python-library.
 
@@ -31,21 +31,21 @@ For using PyPSA-Eur, one should use _conda_.
 - [Anaconda distribution](https://www.anaconda.com/download/success) (all in one)
 - [Miniconda](https://www.anaconda.com/download/success) (customizable, lighter than anaconda)
 - [Miniforge](https://conda-forge.org/miniforge/) (no license restrictions)
-If getting started, one should use Anaconda or Miniconda.
+If just getting started, one should use Anaconda or Miniconda.
 ### B. Setting up PyPSA-Eur environment
-1. Open conda in the terminal (*terminal* -> select *conda* in the upper right selection panel).
-2. Using _cd_ prompt, move to the desired folder for saving the files.
+1. Open a *conda* terminal (*terminal* -> select *conda* from the top-right panel).
+2. Using the _cd_ command, move to the desired folder for saving the files.
 	``cd C:/Users/…``
 3. Clone PyPSA-Eur's github repository.
 	``git clone https://github.com/PyPSA/pypsa-eur.git``
-4. Create a *conda* environment dedicated to PyPSA-Eur (or give the absolute path of the ``environment.yaml`` file downloaded in the from the github repository).
+4. Create a *conda* environment dedicated to PyPSA-Eur (or give the absolute path of the ``environment.yaml`` file downloaded from the github repository).
 	``conda env create -f pypsa-eur/envs/environment.yaml``
 # 3. Running Snakemake
 One should configure the database and solver parameters before running the snakemake process. In the _config_ folder (of the github repository), either:
 - Create a blank _.yaml_ file named _config.yaml_ (create a _.txt_ file and change the extension to _.yaml)._
-- Duplicate the _default.congi.yaml_ file, renaming it to _config.yaml_. 
+- Duplicate the _default.config.yaml_ file, renaming it to _config.yaml_. 
 
-Then custom the _config.yaml_ file to your need (see the role of this file described hereafter). Alternatively, here is a [proposed *config.yaml* file](https://github.com/qmorvan/Getting-Started-PyPSA-Eur/blob/main/config.yaml) with pre-selected major parameters to play with.
+Then customize the _config.yaml_ file to your needs (see the role of this file described hereafter). Alternatively, here is a [proposed *config.yaml* file](https://github.com/qmorvan/Getting-Started-PyPSA-Eur/blob/main/config.yaml) with pre-selected major parameters to play with.
 
 The _default.config.yaml_ file contains all the parameters, along with their default values. Later, when running the snakemake process, it will look for a _config.yaml_ file for overwriting default parameters (for this run only). Thus, the _config.yaml_ file can be tailored to one’s needs, with **any subset of parameters from the default file**.
 
@@ -64,6 +64,6 @@ A “list of jobs” is updated in the terminal along the process. When finished
 
 ---
 # Bonus - MATPOWER like converter program
-A [python program](https://github.com/qmorvan/Getting-Started-PyPSA-Eur/blob/main/data_converter.py) enabling to extract a networks' electrical data built by PyPSA-Eur is proposed.
+A [python program](https://github.com/qmorvan/Getting-Started-PyPSA-Eur/blob/main/data_converter.py) enabling the extraction of a network's electrical data built by PyPSA-Eur is proposed.
 
 It extracts data from the resulting *.nc* PyPSA network and converts it into a [MATPOWER like (i.e. similar to the PTI format) data structure](https://matpower.org/docs/ref/matpower5.0/caseformat.html), in the form of *.csv* files. The resulting data structure is well described in the file's introduction.
